@@ -5,6 +5,8 @@ import {
   useState,
   InputHTMLAttributes,
   LabelHTMLAttributes,
+  ReactElement,
+  cloneElement,
 } from "react";
 import { nanoid } from "nanoid";
 
@@ -15,27 +17,32 @@ export interface UploadFile extends File {
 export type UploadManagerProps = {
   children: (data: any) => ReactNode;
   inputProps: InputHTMLAttributes<HTMLInputElement>;
-  labelProps: LabelHTMLAttributes<HTMLLabelElement>;
+  labelProps?: LabelHTMLAttributes<HTMLLabelElement>;
+  recieverComponent?: ReactElement;
 };
 export const UploadManager: FC<UploadManagerProps> = ({
   children,
   inputProps,
   labelProps,
+  recieverComponent,
 }) => {
-  const { accept = "image/*", type = "file", ...otherInputProps } = inputProps;
+  const {
+    accept = "image/*",
+    type = "file",
+    id = "file-upload",
+    name = "file-upload",
+    ...otherInputProps
+  } = inputProps;
   const [files, setFiles] = useState<UploadFile[]>([]);
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const files = event.currentTarget.files;
-    if (files) {
-      const filesLength = files.length;
-      const modifiedFileList = [];
-      for (let file = 0; file < filesLength; file += 1) {
-        const x = files.item(file);
-        if (x) {
-          modifiedFileList.push(Object.assign(x, { key: nanoid() }));
-        }
-      }
-      setFiles(modifiedFileList);
+    let selectedFiles;
+    selectedFiles = event.currentTarget.files;
+    if (selectedFiles) {
+      selectedFiles = Array.from(selectedFiles).map((file) => {
+        return Object.assign(file, { key: nanoid() });
+      });
+
+      setFiles(selectedFiles);
     }
   };
   return (
@@ -44,15 +51,16 @@ export const UploadManager: FC<UploadManagerProps> = ({
         {...otherInputProps}
         onChange={handleChange}
         accept={accept}
-        style={{
-          display: "none",
-        }}
-        id="file-upload"
-        type="file"
+        id={id}
+        name={id}
+        type={type}
+        hidden
+        multiple
       />
-      <label {...labelProps} htmlFor="file-upload">
-        {children(files)}
+      <label {...labelProps} htmlFor={name}>
+        {recieverComponent && cloneElement(recieverComponent)}
       </label>
+      {children(files)}
     </>
   );
 };
