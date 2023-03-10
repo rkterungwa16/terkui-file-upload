@@ -1,6 +1,14 @@
-import { FC, ReactNode, useEffect } from "react";
+import { FC, ReactNode, useEffect, useState } from "react";
 
 import { FileUploadStatus } from "./constants";
+import { useFileUploadStatus } from "./utils";
+
+// An Effect lets you keep your component synchronized with some external system (like a chat service).
+// Here, external system means any piece of code that’s not controlled by React, such as:
+
+// A timer managed with setInterval() and clearInterval().
+// An event subscription using window.addEventListener() and window.removeEventListener().
+// A third-party animation library with an API like animation.start() and animation.reset().
 
 export type FileUploadProps = {
   file: File;
@@ -23,18 +31,15 @@ export const FileUpload: FC<FileUploadProps> = ({
   file,
   url = "",
 }) => {
-  const xhr = new XMLHttpRequest();
-  const abortRequest = () => {
-    xhr.abort();
-  };
-  const onUploadStart = (event: any) => {
-    const newState = {
-      request: xhr,
-      startUpload: null,
-      abortRequest: abortRequest,
-    };
-    onEvent(FileUploadStatus.UPLOAD_START, event, newState);
-  };
+  const { requestState, eventDetails } = useFileUploadStatus(
+    {
+      method,
+      url,
+      headers,
+    },
+    file
+  );
+
   const onEvent = (
     eventName: FileUploadStatus,
     event: string,
@@ -50,9 +55,7 @@ export const FileUpload: FC<FileUploadProps> = ({
     // props[onEventName(eventName)](event, {});
     // setCurrentEvent(Object.assign(newState, eventState));
   };
-  const onEventName = (eventName: string) => {
-    return `on${eventName.charAt(0).toUpperCase() + eventName.slice(1)}`;
-  };
+
   /**
    * To be consumed by client component as a click button to initiate upload
    */
@@ -62,18 +65,27 @@ export const FileUpload: FC<FileUploadProps> = ({
       formData.append(key, formRequestData[key])
     );
   };
-  useEffect(() => {
-    xhr.open(method, url, true);
-    Object.keys(headers).forEach((key) =>
-      xhr.setRequestHeader(key, headers[key])
-    );
-  }, []);
-  return <>{children}</>;
+  return (
+    <>
+      {children({
+        requestState,
+        eventDetails,
+      })}
+    </>
+  );
 };
 
 type FileManagerProps = {
-  children: Function;
+  children: ReactNode;
+  number: number;
 };
-export const FileManager: FC<FileManagerProps> = ({ children }) => {
-  return <>{}</>;
+export const FileManager: FC<FileManagerProps> = ({ children, number }) => {
+  const [currentState, setCurrentState] = useState(0);
+  useEffect(() => {
+    // setCurrentState(number);
+  }, [number]);
+
+  console.log("current state -->>", currentState);
+  console.log("children -->>", children);
+  return <>{children}</>;
 };
