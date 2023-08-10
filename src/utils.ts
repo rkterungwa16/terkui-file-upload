@@ -7,10 +7,11 @@ import {
   FileErrorStatus,
   FileDownloadStatus,
 } from "./constants";
+import { configXhr, useReadFileDataAsUrl } from "./helpers";
 
 export const modifySelectedFiles = (selectedFiles: FileList): UploadFile[] => {
   return Array.from(selectedFiles).map((file) => {
-    return Object.assign(file, { key: nanoid() });
+    return Object.assign(file, { fileId: nanoid() });
   });
 };
 
@@ -18,27 +19,85 @@ type RequestProps = {
   method: string;
   url: string;
   headers: { [x: string]: any };
+
+  // form data
+  formData?: FormData;
+  file: UploadFile;
+
+  // request upload events
+  onUploadReady?: (
+    e: ProgressEvent<XMLHttpRequestEventTarget | FileReader>
+  ) => void;
+  onUploadStart?: (e: ProgressEvent<XMLHttpRequestEventTarget>) => void;
+  onUploadProgress?: (e: ProgressEvent<XMLHttpRequestEventTarget>) => void;
+  onUploadComplete?: (e: ProgressEvent<XMLHttpRequestEventTarget>) => void;
+  onDownloadStart?: (e: ProgressEvent<XMLHttpRequestEventTarget>) => void;
+  onDownloadProgress?: (e: ProgressEvent<XMLHttpRequestEventTarget>) => void;
+  onDownloadComplete?: (e: ProgressEvent<XMLHttpRequestEventTarget>) => void;
+  onReadyStateChange?: (e: ProgressEvent<XMLHttpRequestEventTarget>) => void;
+  onFileDataReady?: (e: ProgressEvent<FileReader>) => void;
+
+  // request events
+  onError?: (e: ProgressEvent<XMLHttpRequestEventTarget>) => void;
+  onAbort?: (e: ProgressEvent<XMLHttpRequestEventTarget>) => void;
+  onTimeout?: (e: ProgressEvent<XMLHttpRequestEventTarget>) => void;
 };
 
-export const useFileUploadStatus = (requestProps: RequestProps, file: File) => {
-  const { method, url, headers } = requestProps;
+export const useFileUploadStatus = (requestProps: RequestProps) => {
+  const { method, url, headers, file } = requestProps;
+  const xhr = configXhr({
+    method,
+    url,
+    headers,
+  });
+  const { fileDataUrl } = useReadFileDataAsUrl(file);
+  const [ progress, setProgress] = useState({
+    fileId: file.fileId,
+    point: 0
+  })
   const [requestState, setRequestState] = useState<
     FileUploadStatus | null | FileErrorStatus | FileDownloadStatus
   >(null);
   // const [fileData, setFileData] = useState<string | ArrayBuffer | null>(null);
   const [eventDetails, setEventDetails] = useState<{
-    [x: string]: ProgressEvent<XMLHttpRequestEventTarget | FileReader> | null;
-  }>({
-    [FileUploadStatus.UPLOAD_READY]: null,
-    [FileUploadStatus.UPLOAD_START]: null,
-    [FileUploadStatus.UPLOAD_PROGRESS]: null,
-    [FileUploadStatus.UPLOAD_COMPLETE]: null,
-    [FileErrorStatus.ABORT]: null,
-    [FileErrorStatus.ERROR]: null,
-    [FileErrorStatus.TIMEOUT]: null,
-  });
+    // request upload events
+    [FileUploadStatus.UPLOAD_READY]?: (
+      e: ProgressEvent<XMLHttpRequestEventTarget>
+    ) => void;
+    [FileUploadStatus.UPLOAD_START]?: (
+      e: ProgressEvent<XMLHttpRequestEventTarget>
+    ) => void;
+    [FileUploadStatus.UPLOAD_PROGRESS]?: (
+      e: ProgressEvent<XMLHttpRequestEventTarget>
+    ) => void;
+    [FileUploadStatus.UPLOAD_COMPLETE]?: (
+      e: ProgressEvent<XMLHttpRequestEventTarget>
+    ) => void;
+    onDownloadStart?: (e: ProgressEvent<XMLHttpRequestEventTarget>) => void;
+    onDownloadProgress?: (e: ProgressEvent<XMLHttpRequestEventTarget>) => void;
+    onDownloadComplete?: (e: ProgressEvent<XMLHttpRequestEventTarget>) => void;
+    onReadyStateChange?: (e: ProgressEvent<XMLHttpRequestEventTarget>) => void;
+    onFileDataReady?: (e: ProgressEvent<FileReader>) => void;
 
-  const xhr = useCallback(() => new XMLHttpRequest(), [])();
+    // request events
+    [FileErrorStatus.ERROR]?: (
+      e: ProgressEvent<XMLHttpRequestEventTarget>
+    ) => void;
+    [FileErrorStatus.ABORT]?: (
+      e: ProgressEvent<XMLHttpRequestEventTarget>
+    ) => void;
+    [FileErrorStatus.TIMEOUT]?: (
+      e: ProgressEvent<XMLHttpRequestEventTarget>
+    ) => void;
+  }>({
+    [FileUploadStatus.UPLOAD_READY]: requestProps.onUploadReady,
+    [FileUploadStatus.UPLOAD_START]: requestProps.onUploadStart,
+    [FileUploadStatus.UPLOAD_PROGRESS]: requestProps.onUploadProgress,
+    [FileUploadStatus.UPLOAD_COMPLETE]: requestProps.onUploadComplete,
+    [FileErrorStatus.ABORT]: requestProps.onAbort,
+    [FileErrorStatus.ERROR]: requestProps.onError,
+    [FileErrorStatus.TIMEOUT]: requestProps.onError,
+  });
 
   const setEvent = useCallback(
     (status: FileUploadStatus | FileErrorStatus | FileDownloadStatus) => {
@@ -62,11 +121,6 @@ export const useFileUploadStatus = (requestProps: RequestProps, file: File) => {
   }, [file, setEvent]);
 
   useEffect(() => {
-    xhr.open(method, url, true);
-    Object.keys(headers).forEach((key) =>
-      xhr.setRequestHeader(key, headers[key])
-    );
-
     xhr.upload.addEventListener(
       "loadstart",
       setEvent(FileUploadStatus.UPLOAD_START)
@@ -101,7 +155,7 @@ export const useFileUploadStatus = (requestProps: RequestProps, file: File) => {
       xhr.removeEventListener("timeout", setEvent(FileErrorStatus.TIMEOUT));
       // xhr.onreadystatechange = null;
     };
-  }, [headers, method, setEvent, url, xhr]);
+  }, [setEvent, url, xhr]);
   return {
     requestState,
     eventDetails,
