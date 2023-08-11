@@ -12,13 +12,24 @@ import { UploadFile } from "./types";
 import { modifySelectedFiles } from "./utils";
 
 export type FileUploadManagerProps = {
-  children: (data: any) => ReactNode;
+  method: string;
+  url: string;
+  headers: { [x: string]: any };
+  children: (data: {
+    files: UploadFile[];
+    method: string;
+    url: string;
+    headers: { [x: string]: any };
+  }) => ReactNode;
   inputComponent: ReactElement;
   uploadAreaComponent: ReactElement;
   hoverLabel?: string;
   dropLabel?: string;
 };
 export const FileUploadManager: FC<FileUploadManagerProps> = ({
+  method,
+  url,
+  headers,
   hoverLabel = "Click to upload or drag and drop",
   dropLabel = "Drop file here",
   children,
@@ -89,7 +100,7 @@ export const FileUploadManager: FC<FileUploadManagerProps> = ({
         ...dragEvents,
       })}
 
-      {children(files)}
+      {children({ files, method, url, headers })}
     </>
   );
 };

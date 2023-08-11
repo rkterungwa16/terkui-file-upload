@@ -1,10 +1,15 @@
 import { ReactNode, FC, useState } from "react";
+import Image from 'next/image';
 import {
   FileManager,
   FileUploadManager,
   FileUploadInput,
   FileUploadArea,
+  FileUpload,
 } from "../src";
+
+const CLOUD_NAME = "dpdenton";
+const CLOUD_URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/upload`;
 
 export default function Home() {
   const id = "file-upload";
@@ -20,6 +25,9 @@ export default function Home() {
             <div>My Titles</div>
           </FileManager>
           <FileUploadManager
+            url={CLOUD_URL}
+            method={"POST"}
+            headers={{ "X-Requested-With": "XMLHttpRequest" }}
             inputComponent={<FileUploadInput id={id} name={name} />}
             uploadAreaComponent={
               <FileUploadArea
@@ -35,9 +43,51 @@ export default function Home() {
               </FileUploadArea>
             }
           >
-            {(files) => {
+            {({ files, method, url, headers }) => {
               console.log("files -->>", files);
-              return <></>;
+              return (
+                <>
+                  {files.length
+                    ? files.map((_file) => (
+                        <FileUpload
+                          key={_file.fileId}
+                          method={method}
+                          url={url}
+                          headers={headers}
+                          file={_file}
+                        >
+                          {({ requestState, startUpload, events }) => (
+                            <>
+                            {console.log('events___', events)}
+                            {console.log('requeststate___', requestState)}
+                              {events?.upload_ready?.fileDataUrl && (
+                                <>
+                                  <Image
+                                    src={events.upload_ready.fileDataUrl}
+                                    alt={_file.name}
+                                    width={150}
+                                    height={150}
+                                  />
+                                  <button
+                                    onClick={() => {
+                                      startUpload({
+                                        file: _file,
+                                        fileDataUrl:
+                                          events.upload_ready.fileDataUrl,
+                                      });
+                                    }}
+                                  >
+                                    upload
+                                  </button>
+                                </>
+                              )}
+                            </>
+                          )}
+                        </FileUpload>
+                      ))
+                    : null}
+                </>
+              );
             }}
           </FileUploadManager>
         </CompC>
