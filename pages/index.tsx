@@ -1,15 +1,15 @@
 import { ReactNode, FC, useState } from "react";
-import Image from 'next/image';
+import Image from "next/image";
 import {
-  FileManager,
   FileUploadManager,
   FileUploadInput,
   FileUploadArea,
   FileUpload,
 } from "../src";
 
-const CLOUD_NAME = "dpdenton";
-const CLOUD_URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/upload`;
+const CLOUD_NAME = "doy0uyv63";
+const CLOUD_URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
+// https://api.cloudinary.com/v1_1/doy0uyv63
 
 export default function Home() {
   const id = "file-upload";
@@ -18,12 +18,6 @@ export default function Home() {
     <CompA>
       <CompB>
         <CompC>
-          <FileManager number={1}>
-            <div>My Name</div>
-          </FileManager>
-          <FileManager number={2}>
-            <div>My Titles</div>
-          </FileManager>
           <FileUploadManager
             url={CLOUD_URL}
             method={"POST"}
@@ -58,8 +52,8 @@ export default function Home() {
                         >
                           {({ requestState, startUpload, events }) => (
                             <>
-                            {console.log('events___', events)}
-                            {console.log('requeststate___', requestState)}
+                              {console.log("events___", events)}
+                              {console.log("requeststate___", requestState)}
                               {events?.upload_ready?.fileDataUrl && (
                                 <>
                                   <Image
@@ -72,8 +66,11 @@ export default function Home() {
                                     onClick={() => {
                                       startUpload({
                                         file: _file,
-                                        fileDataUrl:
-                                          events.upload_ready.fileDataUrl,
+                                        // fileDataUrl:
+                                        //   events.upload_ready.fileDataUrl,
+                                        upload_preset: "terunkom",
+                                        api_key: '811718711578253',
+                                        tags: "demo_upload",
                                       });
                                     }}
                                   >

@@ -90,7 +90,7 @@ export const FileUploadManager: FC<FileUploadManagerProps> = ({
     onDragOver: stopDefaults,
     onDrop: handleDrop,
   };
-  console.log("files______", files);
+
   return (
     <>
       {cloneElement(inputComponent, {

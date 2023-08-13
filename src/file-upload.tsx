@@ -5,6 +5,7 @@ import {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 
@@ -15,11 +16,12 @@ import {
   FileDownloadStatus,
 } from "./constants";
 import {
+  FormDataProps,
   configXhr,
   startUpload,
   uploadProgress,
   useReadFileDataAsUrl,
-} from "./helpers";
+} from "./utils";
 
 export const modifySelectedFiles = (selectedFiles: FileList): UploadFile[] => {
   return Array.from(selectedFiles).map((file) => {
@@ -33,7 +35,9 @@ type RequestProps = {
   headers: { [x: string]: any };
 
   // form data
-  formData?: FormData;
+  formData?: {
+    [key: string]: string | File;
+  };
   file: UploadFile;
 
   children: (data: {
@@ -51,7 +55,7 @@ type RequestProps = {
         fileId: string;
       };
     };
-    startUpload: (formFile: { file: UploadFile; fileDataUrl: string }) => void;
+    startUpload: (formData: FormDataProps) => void;
   }) => ReactNode;
 };
 
@@ -62,11 +66,15 @@ export const FileUpload: FC<RequestProps> = ({
   file,
   children,
 }) => {
-  const xhr = configXhr({
-    method,
-    url,
-    headers,
-  });
+  const xhrRef = useRef(
+    configXhr({
+      method,
+      url,
+      headers,
+    })
+  );
+
+  const xhr = xhrRef?.current;
 
   const { fileDataUrl } = useReadFileDataAsUrl(file);
   const [progress, setProgress] = useState({
@@ -115,50 +123,60 @@ export const FileUpload: FC<RequestProps> = ({
 
   const handleUploadProgress = useCallback(
     (event: ProgressEvent<XMLHttpRequestEventTarget | FileReader>) => {
+      setRequestState(FileUploadStatus.UPLOAD_PROGRESS);
+      const percent = event.total ? event.loaded / event.total : 0;
+      console.log("percent___upload__progress", percent);
       setProgress({
         ...progress,
-        percent: event.total ? event.loaded / event.total : 0,
+        percent,
       });
     },
     [progress]
   );
 
   const handleUploadStartEvent = useCallback(
-    (e: ProgressEvent<XMLHttpRequestEventTarget>) => {
+    (event: ProgressEvent<XMLHttpRequestEventTarget>) => {
+      const percent = event.total ? event.loaded / event.total : 0;
+      console.log("percent___upload__start", percent);
       setRequestState(FileUploadStatus.UPLOAD_START);
     },
     []
   );
 
   const handleUploadCompleteEvent = useCallback(
-    (e: ProgressEvent<XMLHttpRequestEventTarget>) => {
+    (event: ProgressEvent<XMLHttpRequestEventTarget>) => {
+      const percent = event.total ? event.loaded / event.total : 0;
+      console.log("percent___upload__complete", percent);
       setRequestState(FileUploadStatus.UPLOAD_COMPLETE);
     },
     []
   );
-
+  console.log("request state", requestState);
+  console.log("progress___", progress);
   useEffect(() => {
-    xhr.upload.addEventListener("loadstart", handleUploadStartEvent);
-    xhr.upload.addEventListener("progress", handleUploadProgress);
-    xhr.upload.addEventListener("loadend", handleUploadCompleteEvent);
-    // xhr.addEventListener("error", setEvent(FileErrorStatus.ERROR));
-    // xhr.addEventListener("abort", setEvent(FileErrorStatus.ABORT));
-    // xhr.addEventListener("timeout", setEvent(FileErrorStatus.TIMEOUT));
-    // xhr.onreadystatechange = onReadyStateChange;
-    return () => {
-      xhr.upload.removeEventListener("loadstart", handleUploadStartEvent);
-      xhr.upload.removeEventListener("progress", handleUploadProgress);
-      xhr.upload.removeEventListener("loadend", handleUploadCompleteEvent);
-      // xhr.removeEventListener("error", setEvent(FileErrorStatus.ERROR));
-      // xhr.removeEventListener("abort", setEvent(FileErrorStatus.ABORT));
-      // xhr.removeEventListener("timeout", setEvent(FileErrorStatus.TIMEOUT));
-      // xhr.onreadystatechange = null;
-    };
+    console.log("xhr____");
+    if (xhr) {
+      xhr.upload.addEventListener("loadstart", handleUploadStartEvent);
+      xhr.upload.addEventListener("progress", handleUploadProgress);
+      xhr.upload.addEventListener("load", handleUploadCompleteEvent);
+      // xhr.addEventListener("error", setEvent(FileErrorStatus.ERROR));
+      // xhr.addEventListener("abort", setEvent(FileErrorStatus.ABORT));
+      // xhr.addEventListener("timeout", setEvent(FileErrorStatus.TIMEOUT));
+      // xhr.onreadystatechange = onReadyStateChange;
+      return () => {
+        xhr.upload.removeEventListener("loadstart", handleUploadStartEvent);
+        xhr.upload.removeEventListener("progress", handleUploadProgress);
+        xhr.upload.removeEventListener("load", handleUploadCompleteEvent);
+        // xhr.removeEventListener("error", setEvent(FileErrorStatus.ERROR));
+        // xhr.removeEventListener("abort", setEvent(FileErrorStatus.ABORT));
+        // xhr.removeEventListener("timeout", setEvent(FileErrorStatus.TIMEOUT));
+        // xhr.onreadystatechange = null;
+      };
+    }
   }, [
     xhr,
     handleUploadProgress,
     handleUploadStartEvent,
-    setEvent,
     handleUploadCompleteEvent,
   ]);
   return (
