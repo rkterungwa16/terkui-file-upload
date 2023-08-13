@@ -55,6 +55,7 @@ type RequestProps = {
         fileId: string;
       };
     };
+    imageUploadResponse: string;
     startUpload: (formData: FormDataProps) => void;
   }) => ReactNode;
 };
@@ -84,6 +85,7 @@ export const FileUpload: FC<RequestProps> = ({
   const [requestState, setRequestState] = useState<
     FileUploadStatus | null | FileErrorStatus | FileDownloadStatus
   >(null);
+  const [imageUploadResponse, setImageUploadResponse] = useState("");
   // For each event set it as the current request state.
   //
   // const [fileData, setFileData] = useState<string | ArrayBuffer | null>(null);
@@ -125,7 +127,6 @@ export const FileUpload: FC<RequestProps> = ({
     (event: ProgressEvent<XMLHttpRequestEventTarget | FileReader>) => {
       setRequestState(FileUploadStatus.UPLOAD_PROGRESS);
       const percent = event.total ? event.loaded / event.total : 0;
-      console.log("percent___upload__progress", percent);
       setProgress({
         ...progress,
         percent,
@@ -137,7 +138,6 @@ export const FileUpload: FC<RequestProps> = ({
   const handleUploadStartEvent = useCallback(
     (event: ProgressEvent<XMLHttpRequestEventTarget>) => {
       const percent = event.total ? event.loaded / event.total : 0;
-      console.log("percent___upload__start", percent);
       setRequestState(FileUploadStatus.UPLOAD_START);
     },
     []
@@ -146,19 +146,21 @@ export const FileUpload: FC<RequestProps> = ({
   const handleUploadCompleteEvent = useCallback(
     (event: ProgressEvent<XMLHttpRequestEventTarget>) => {
       const percent = event.total ? event.loaded / event.total : 0;
-      console.log("percent___upload__complete", percent);
       setRequestState(FileUploadStatus.UPLOAD_COMPLETE);
     },
     []
   );
-  console.log("request state", requestState);
-  console.log("progress___", progress);
+
   useEffect(() => {
-    console.log("xhr____");
     if (xhr) {
       xhr.upload.addEventListener("loadstart", handleUploadStartEvent);
       xhr.upload.addEventListener("progress", handleUploadProgress);
       xhr.upload.addEventListener("load", handleUploadCompleteEvent);
+      xhr.onreadystatechange = () => {
+        if (xhr.readyState === 4) {
+          setImageUploadResponse(xhr.response);
+        }
+      };
       // xhr.addEventListener("error", setEvent(FileErrorStatus.ERROR));
       // xhr.addEventListener("abort", setEvent(FileErrorStatus.ABORT));
       // xhr.addEventListener("timeout", setEvent(FileErrorStatus.TIMEOUT));
@@ -185,6 +187,7 @@ export const FileUpload: FC<RequestProps> = ({
         events,
         startUpload: startUpload(xhr),
         requestState,
+        imageUploadResponse,
       })}
     </>
   );

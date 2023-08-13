@@ -38,7 +38,6 @@ export default function Home() {
             }
           >
             {({ files, method, url, headers }) => {
-              console.log("files -->>", files);
               return (
                 <>
                   {files.length
@@ -52,8 +51,6 @@ export default function Home() {
                         >
                           {({ requestState, startUpload, events }) => (
                             <>
-                              {console.log("events___", events)}
-                              {console.log("requeststate___", requestState)}
                               {events?.upload_ready?.fileDataUrl && (
                                 <>
                                   <Image
@@ -69,7 +66,7 @@ export default function Home() {
                                         // fileDataUrl:
                                         //   events.upload_ready.fileDataUrl,
                                         upload_preset: "terunkom",
-                                        api_key: '811718711578253',
+                                        api_key: "811718711578253",
                                         tags: "demo_upload",
                                       });
                                     }}
