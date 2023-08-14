@@ -1,13 +1,5 @@
 import { nanoid } from "nanoid";
-import {
-  FC,
-  ReactNode,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { FC, ReactNode, useCallback, useEffect, useRef, useState } from "react";
 
 import { UploadFile } from "./types";
 import {
@@ -19,7 +11,6 @@ import {
   FormDataProps,
   configXhr,
   startUpload,
-  uploadProgress,
   useReadFileDataAsUrl,
 } from "./utils";
 
