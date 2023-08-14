@@ -20,7 +20,7 @@ export const modifySelectedFiles = (selectedFiles: FileList): UploadFile[] => {
   });
 };
 
-type RequestProps = {
+export type FileUploadProps = {
   method: string;
   url: string;
   headers: { [x: string]: any };
@@ -54,7 +54,7 @@ type RequestProps = {
   }) => ReactNode;
 };
 
-export const FileUpload: FC<RequestProps> = ({
+export const FileUpload: FC<FileUploadProps> = ({
   method,
   url,
   headers,
