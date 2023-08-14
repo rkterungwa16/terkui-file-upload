@@ -41,6 +41,10 @@ type RequestProps = {
   file: UploadFile;
 
   children: (data: {
+    file: UploadFile;
+    progress: {
+      percent: number;
+    };
     requestState:
       | FileUploadStatus
       | FileErrorStatus
@@ -51,8 +55,7 @@ type RequestProps = {
         fileDataUrl: string;
       };
       [FileUploadStatus.UPLOAD_PROGRESS]: {
-        progress: number;
-        fileId: string;
+        percent: number;
       };
     };
     imageUploadResponse: string;
@@ -79,7 +82,6 @@ export const FileUpload: FC<RequestProps> = ({
 
   const { fileDataUrl } = useReadFileDataAsUrl(file);
   const [progress, setProgress] = useState({
-    fileId: file.fileId,
     percent: 0,
   });
   const [requestState, setRequestState] = useState<
@@ -94,13 +96,22 @@ export const FileUpload: FC<RequestProps> = ({
       fileDataUrl,
     },
     [FileUploadStatus.UPLOAD_PROGRESS]: {
-      progress: 0,
-      fileId: file.fileId,
+      event: null,
+      percent: 0,
+    },
+    [FileUploadStatus.UPLOAD_START]: {
+      event: null,
+      percent: 0,
+    },
+    [FileUploadStatus.UPLOAD_COMPLETE]: {
+      event: null,
+      percent: 0,
     },
   });
 
   useEffect(() => {
     if (fileDataUrl !== events[FileUploadStatus.UPLOAD_READY].fileDataUrl) {
+      setRequestState(FileUploadStatus.UPLOAD_READY);
       setEvents({
         ...events,
         [FileUploadStatus.UPLOAD_READY]: {
@@ -110,45 +121,46 @@ export const FileUpload: FC<RequestProps> = ({
     }
   }, [fileDataUrl, events]);
 
-  const setEvent = useCallback(
+  const handleSetEvents = useCallback(
     (status: FileUploadStatus | FileErrorStatus | FileDownloadStatus) => {
-      return (e: ProgressEvent<XMLHttpRequestEventTarget | FileReader>) => {
+      return (event: ProgressEvent<XMLHttpRequestEventTarget | FileReader>) => {
         setRequestState(status);
+        const percent = event.total ? event.loaded / event.total : 0;
+        setProgress({
+          ...progress,
+          percent,
+        });
         setEvents({
           ...events,
-          [status]: e,
+          [status]: {
+            percent,
+            event,
+          },
         });
       };
     },
-    [events]
+    [events, progress]
   );
 
   const handleUploadProgress = useCallback(
-    (event: ProgressEvent<XMLHttpRequestEventTarget | FileReader>) => {
-      setRequestState(FileUploadStatus.UPLOAD_PROGRESS);
-      const percent = event.total ? event.loaded / event.total : 0;
-      setProgress({
-        ...progress,
-        percent,
-      });
+    (event: ProgressEvent<XMLHttpRequestEventTarget>) => {
+      handleSetEvents(FileUploadStatus.UPLOAD_PROGRESS)(event);
     },
-    [progress]
+    [handleSetEvents]
   );
 
   const handleUploadStartEvent = useCallback(
     (event: ProgressEvent<XMLHttpRequestEventTarget>) => {
-      const percent = event.total ? event.loaded / event.total : 0;
-      setRequestState(FileUploadStatus.UPLOAD_START);
+      handleSetEvents(FileUploadStatus.UPLOAD_START)(event);
     },
-    []
+    [handleSetEvents]
   );
 
   const handleUploadCompleteEvent = useCallback(
     (event: ProgressEvent<XMLHttpRequestEventTarget>) => {
-      const percent = event.total ? event.loaded / event.total : 0;
-      setRequestState(FileUploadStatus.UPLOAD_COMPLETE);
+      handleSetEvents(FileUploadStatus.UPLOAD_COMPLETE)(event);
     },
-    []
+    [handleSetEvents]
   );
 
   useEffect(() => {
@@ -184,6 +196,8 @@ export const FileUpload: FC<RequestProps> = ({
   return (
     <>
       {children({
+        progress,
+        file,
         events,
         startUpload: startUpload(xhr),
         requestState,

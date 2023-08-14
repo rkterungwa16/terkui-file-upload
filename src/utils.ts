@@ -46,8 +46,8 @@ export const useReadFileDataAsUrl = (file: UploadFile) => {
   useEffect(() => {
     if (file) {
       const reader = new FileReader();
-      reader.onload = (ev) => {
-        const result = ev.target?.result;
+      reader.onload = (event) => {
+        const result = event.target?.result;
         setFileDataUrl(result ? result.toString() : "");
       };
       reader.readAsDataURL(file);

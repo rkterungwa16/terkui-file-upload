@@ -49,10 +49,14 @@ export default function Home() {
                           headers={headers}
                           file={_file}
                         >
-                          {({ requestState, startUpload, events }) => (
+                          {({ requestState, startUpload, events, progress }) => (
                             <>
                               {events?.upload_ready?.fileDataUrl && (
                                 <>
+                                  {console.log('events____', events)}
+                                  {console.log('status____', requestState)}
+                                  {console.log('progress____', progress)}
+
                                   <Image
                                     src={events.upload_ready.fileDataUrl}
                                     alt={_file.name}
