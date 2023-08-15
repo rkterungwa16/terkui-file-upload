@@ -89,14 +89,17 @@ export const FileUpload: FC<FileUploadProps> = ({
     [FileUploadStatus.UPLOAD_PROGRESS]: {
       event: null,
       percent: 0,
+      timeRemaining: 0,
     },
     [FileUploadStatus.UPLOAD_START]: {
       event: null,
       percent: 0,
+      timeRemaining: 0,
     },
     [FileUploadStatus.UPLOAD_COMPLETE]: {
       event: null,
       percent: 0,
+      timeRemaining: 0,
     },
   });
 
@@ -116,7 +119,16 @@ export const FileUpload: FC<FileUploadProps> = ({
     (status: FileUploadStatus | FileErrorStatus | FileDownloadStatus) => {
       return (event: ProgressEvent<XMLHttpRequestEventTarget | FileReader>) => {
         setRequestState(status);
+        let timeRemaining;
         const percent = event.total ? event.loaded / event.total : 0;
+        if (event.loaded) {
+          const uploadSpeed = event.loaded / (event.timeStamp / 1000);
+          console.log("upload speed___", uploadSpeed);
+          timeRemaining = Math.floor(
+            (event.total - event.loaded) / uploadSpeed
+          );
+          console.log("time remaining___", timeRemaining);
+        }
         setProgress({
           ...progress,
           percent,
@@ -126,6 +138,7 @@ export const FileUpload: FC<FileUploadProps> = ({
           [status]: {
             percent,
             event,
+            timeRemaining,
           },
         });
       };

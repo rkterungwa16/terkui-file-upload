@@ -61,9 +61,9 @@ export default function Home() {
                             <>
                               {events?.upload_ready?.fileDataUrl && (
                                 <>
-                                  {console.log("events____", events)}
+                                  {/* {console.log("events____", events)}
                                   {console.log("status____", requestState)}
-                                  {console.log("progress____", progress)}
+                                  {console.log("progress____", progress)} */}
 
                                   <div
                                     style={{
