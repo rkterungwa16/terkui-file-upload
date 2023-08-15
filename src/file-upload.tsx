@@ -123,11 +123,9 @@ export const FileUpload: FC<FileUploadProps> = ({
         const percent = event.total ? event.loaded / event.total : 0;
         if (event.loaded) {
           const uploadSpeed = event.loaded / (event.timeStamp / 1000);
-          console.log("upload speed___", uploadSpeed);
           timeRemaining = Math.floor(
             (event.total - event.loaded) / uploadSpeed
           );
-          console.log("time remaining___", timeRemaining);
         }
         setProgress({
           ...progress,
