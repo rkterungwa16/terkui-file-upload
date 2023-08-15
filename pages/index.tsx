@@ -6,6 +6,7 @@ import {
   FileUploadArea,
   FileUpload,
 } from "../src";
+import CircularProgressBar from "../src/circular-progress-bar";
 
 const CLOUD_NAME = "doy0uyv63";
 const CLOUD_URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
@@ -26,10 +27,12 @@ export default function Home() {
             uploadAreaComponent={
               <FileUploadArea
                 style={{
-                  width: "200px",
-                  height: "200px",
-                  border: "1px solid black",
+                  width: "250px",
+                  height: "250px",
+                  border: "1px solid red",
                   display: "block",
+                  color: "white",
+                  padding: "1rem",
                 }}
                 htmlFor={name}
               >
@@ -49,34 +52,87 @@ export default function Home() {
                           headers={headers}
                           file={_file}
                         >
-                          {({ requestState, startUpload, events, progress }) => (
+                          {({
+                            requestState,
+                            startUpload,
+                            events,
+                            progress,
+                          }) => (
                             <>
                               {events?.upload_ready?.fileDataUrl && (
                                 <>
-                                  {console.log('events____', events)}
-                                  {console.log('status____', requestState)}
-                                  {console.log('progress____', progress)}
+                                  {console.log("events____", events)}
+                                  {console.log("status____", requestState)}
+                                  {console.log("progress____", progress)}
 
-                                  <Image
-                                    src={events.upload_ready.fileDataUrl}
-                                    alt={_file.name}
-                                    width={150}
-                                    height={150}
-                                  />
-                                  <button
-                                    onClick={() => {
-                                      startUpload({
-                                        file: _file,
-                                        // fileDataUrl:
-                                        //   events.upload_ready.fileDataUrl,
-                                        upload_preset: "terunkom",
-                                        api_key: "811718711578253",
-                                        tags: "demo_upload",
-                                      });
+                                  <div
+                                    style={{
+                                      width: "150px",
+                                      height: "150px",
+                                      position: "relative",
+                                      display: "flex",
+                                      alignItems: "center",
+                                      justifyContent: "center",
                                     }}
                                   >
-                                    upload
-                                  </button>
+                                    <Image
+                                      src={events.upload_ready.fileDataUrl}
+                                      alt={_file.name}
+                                      width={150}
+                                      height={150}
+                                    />
+                                    <button
+                                      style={{
+                                        position: "absolute",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        bottom: "0px",
+                                        right: "5px",
+                                        height: "30px",
+                                        width: "30px",
+                                        borderRadius: "50%",
+                                        border: "none",
+                                        background: "white",
+                                        cursor: "pointer",
+                                      }}
+                                      onClick={() => {
+                                        startUpload({
+                                          file: _file,
+                                          // fileDataUrl:
+                                          //   events.upload_ready.fileDataUrl,
+                                          upload_preset: "terunkom",
+                                          api_key: "811718711578253",
+                                          tags: "demo_upload",
+                                        });
+                                      }}
+                                    >
+                                      <Image
+                                        alt="upload icon"
+                                        src="/upload.png"
+                                        width={24}
+                                        height={24}
+                                      />
+                                    </button>
+                                    <div
+                                      style={{
+                                        position: "absolute",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                      }}
+                                    >
+                                      <CircularProgressBar
+                                        width="45"
+                                        height="48"
+                                        viewBox="0 0 45 48"
+                                        radius={16}
+                                        firstArcEndAngle={
+                                          progress.percent * 359.9
+                                        }
+                                      />
+                                    </div>
+                                  </div>
                                 </>
                               )}
                             </>
@@ -95,7 +151,9 @@ export default function Home() {
 }
 
 const CompA: FC<{ children: ReactNode }> = ({ children }) => {
-  return <>{children}</>;
+  return (
+    <div style={{ display: "flex", flexDirection: "column" }}>{children}</div>
+  );
 };
 const CompB: FC<{ children: ReactNode }> = ({ children }) => {
   const [counter, setCounter] = useState(0);
@@ -103,7 +161,15 @@ const CompB: FC<{ children: ReactNode }> = ({ children }) => {
     setCounter(counter + 1);
   };
   return (
-    <div style={{ border: "1px solid red" }} onClick={handleClick}>
+    <div
+      style={{
+        border: "1px solid red",
+        height: "250px",
+        width: "250px",
+        margin: "2rem auto",
+      }}
+      onClick={handleClick}
+    >
       {children}
     </div>
   );
