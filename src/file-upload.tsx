@@ -30,7 +30,7 @@ export type FileUploadProps = {
     [key: string]: string | File;
   };
   file: UploadFile;
-
+  auto?: boolean;
   children: (data: {
     file: UploadFile;
     progress: {
@@ -47,6 +47,7 @@ export type FileUploadProps = {
       };
       [FileUploadStatus.UPLOAD_PROGRESS]: {
         percent: number;
+        timeRemaining: number;
       };
     };
     imageUploadResponse: string;
@@ -60,6 +61,7 @@ export const FileUpload: FC<FileUploadProps> = ({
   headers,
   file,
   children,
+  auto = false,
 }) => {
   const xhrRef = useRef(
     configXhr({
@@ -164,6 +166,19 @@ export const FileUpload: FC<FileUploadProps> = ({
     },
     [handleSetEvents]
   );
+
+  useEffect(() => {
+    if (auto && requestState === FileUploadStatus.UPLOAD_READY) {
+      startUpload(xhr)({
+        file,
+        // fileDataUrl:
+        //   events.upload_ready.fileDataUrl,
+        upload_preset: "terunkom",
+        api_key: "811718711578253",
+        tags: "demo_upload",
+      });
+    }
+  }, [auto, requestState, xhr, file]);
 
   useEffect(() => {
     if (xhr) {
