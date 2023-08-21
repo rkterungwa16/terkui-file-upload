@@ -20,6 +20,29 @@ export const modifySelectedFiles = (selectedFiles: FileList): UploadFile[] => {
   });
 };
 
+// FileUploadStatus | FileErrorStatus | FileDownloadStatus
+
+export type FileUploadEvents = {
+  [FileUploadStatus.UPLOAD_READY]: {
+    fileDataUrl: string;
+  };
+  [FileUploadStatus.UPLOAD_PROGRESS]: {
+    event: ProgressEvent<XMLHttpRequestEventTarget> | null;
+    percent: number;
+    timeRemaining: number;
+  };
+  [FileUploadStatus.UPLOAD_START]: {
+    event: ProgressEvent<XMLHttpRequestEventTarget> | null;
+    percent: number;
+    timeRemaining: number;
+  };
+  [FileUploadStatus.UPLOAD_COMPLETE]: {
+    event: ProgressEvent<XMLHttpRequestEventTarget> | null;
+    percent: number;
+    timeRemaining: number;
+  };
+};
+
 export type FileUploadProps = {
   method: string;
   url: string;
@@ -36,20 +59,11 @@ export type FileUploadProps = {
     progress: {
       percent: number;
     };
-    requestState:
-      | FileUploadStatus
-      | FileErrorStatus
-      | FileDownloadStatus
-      | null;
-    events: {
-      [FileUploadStatus.UPLOAD_READY]: {
-        fileDataUrl: string;
-      };
-      [FileUploadStatus.UPLOAD_PROGRESS]: {
-        percent: number;
-        timeRemaining: number;
-      };
-    };
+    requestState?: FileUploadStatus;
+    // | FileErrorStatus
+    // | FileDownloadStatus
+    // | null;
+    events: FileUploadEvents;
     imageUploadResponse: string;
     startUpload: (formData: FormDataProps) => void;
   }) => ReactNode;
@@ -78,13 +92,13 @@ export const FileUpload: FC<FileUploadProps> = ({
     percent: 0,
   });
   const [requestState, setRequestState] = useState<
-    FileUploadStatus | null | FileErrorStatus | FileDownloadStatus
-  >(null);
+    FileUploadStatus | undefined
+  >();
   const [imageUploadResponse, setImageUploadResponse] = useState("");
   // For each event set it as the current request state.
   //
   // const [fileData, setFileData] = useState<string | ArrayBuffer | null>(null);
-  const [events, setEvents] = useState({
+  const [events, setEvents] = useState<FileUploadEvents>({
     [FileUploadStatus.UPLOAD_READY]: {
       fileDataUrl,
     },
@@ -118,7 +132,7 @@ export const FileUpload: FC<FileUploadProps> = ({
   }, [fileDataUrl, events]);
 
   const handleSetEvents = useCallback(
-    (status: FileUploadStatus | FileErrorStatus | FileDownloadStatus) => {
+    (status: FileUploadStatus) => {
       return (event: ProgressEvent<XMLHttpRequestEventTarget | FileReader>) => {
         setRequestState(status);
         let timeRemaining;

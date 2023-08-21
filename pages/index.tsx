@@ -121,17 +121,20 @@ export default function Home() {
                                   >
                                     {_file.name}
                                   </span>
-                                  <span
-                                    style={{
-                                      fontSize: "14px",
-                                      color: "#a4aeb6",
-                                      fontWeight: "bold",
-                                    }}
-                                  >
-                                    {progress.percent !== 1
-                                      ? `${events.upload_progress.timeRemaining} s`
-                                      : "0 s"}
-                                  </span>
+                                  {requestState &&
+                                    events[requestState] &&
+                                    progress.percent !== 1 && (
+                                      <span
+                                        style={{
+                                          fontSize: "14px",
+                                          color: "#a4aeb6",
+                                          fontWeight: "bold",
+                                        }}
+                                      >
+                                        `${events.upload_progress.timeRemaining}{" "}
+                                        s`
+                                      </span>
+                                    )}
                                 </div>
                                 {/* <button
                                     style={{
@@ -166,23 +169,30 @@ export default function Home() {
                                       height={24}
                                     />
                                   </button> */}
-                                <div
-                                  style={{
-                                    position: "absolute",
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    right: "0.5rem",
-                                  }}
-                                >
-                                  <CircularProgressBar
-                                    width="45"
-                                    height="48"
-                                    viewBox="0 0 45 48"
-                                    radius={16}
-                                    firstArcEndAngle={progress.percent * 359.9}
-                                  />
-                                </div>
+
+                                {requestState &&
+                                  events[requestState] &&
+                                  progress.percent !== 1 && (
+                                    <div
+                                      style={{
+                                        position: "absolute",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        right: "0.5rem",
+                                      }}
+                                    >
+                                      <CircularProgressBar
+                                        width="45"
+                                        height="48"
+                                        viewBox="0 0 45 48"
+                                        radius={16}
+                                        firstArcEndAngle={
+                                          progress.percent * 359.9
+                                        }
+                                      />
+                                    </div>
+                                  )}
                               </StyledCard>
                             </>
                           )}
