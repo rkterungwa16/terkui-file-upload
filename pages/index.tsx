@@ -8,11 +8,8 @@ import {
 } from "../src";
 import CircularProgressBar from "../src/circular-progress-bar";
 import { Layout } from "../src/layout";
-import {
-  StyledCard,
-  StyledPageHeaderWrapper,
-  StyledPrimaryButton,
-} from "../src/styles";
+
+import styles from "../src/styles.module.css";
 
 const CLOUD_NAME = "doy0uyv63";
 const CLOUD_URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
@@ -23,10 +20,10 @@ export default function Home() {
   const name = "file-upload";
   return (
     <Layout>
-      <StyledCard>
-        <StyledPageHeaderWrapper>
+      <div className={styles.StyledCard}>
+        <div className={styles.StyledPageHeaderWrapper}>
           <h3>Upload files</h3>
-        </StyledPageHeaderWrapper>
+        </div>
         <FileUploadManager
           url={CLOUD_URL}
           method={"POST"}
@@ -51,9 +48,13 @@ export default function Home() {
               </h4>
               <p style={{ paddingTop: "0.5rem", paddingBottom: "1rem" }}>OR</p>
 
-              <StyledPrimaryButton role="button" htmlFor={name}>
+              <label
+                className={`${styles.StyledPrimaryButton} ${styles.Button}`}
+                role="button"
+                htmlFor={name}
+              >
                 upload
-              </StyledPrimaryButton>
+              </label>
             </FileUploadArea>
           }
         >
@@ -86,7 +87,8 @@ export default function Home() {
                                   {console.log("status____", requestState)}
                                   {console.log("progress____", progress)} */}
 
-                              <StyledCard
+                              <div
+                                className={styles.StyledCard}
                                 style={{
                                   position: "relative",
                                   display: "flex",
@@ -131,8 +133,7 @@ export default function Home() {
                                           fontWeight: "bold",
                                         }}
                                       >
-                                        `${events.upload_progress.timeRemaining}{" "}
-                                        s`
+                                        {events.upload_progress.timeRemaining} s
                                       </span>
                                     )}
                                 </div>
@@ -193,7 +194,7 @@ export default function Home() {
                                       />
                                     </div>
                                   )}
-                              </StyledCard>
+                              </div>
                             </>
                           )}
                         </>
@@ -206,36 +207,7 @@ export default function Home() {
             return null;
           }}
         </FileUploadManager>
-      </StyledCard>
+      </div>
     </Layout>
   );
 }
-
-const CompA: FC<{ children: ReactNode }> = ({ children }) => {
-  return (
-    <div style={{ display: "flex", flexDirection: "column" }}>{children}</div>
-  );
-};
-const CompB: FC<{ children: ReactNode }> = ({ children }) => {
-  const [counter, setCounter] = useState(0);
-  const handleClick = () => {
-    setCounter(counter + 1);
-  };
-  return (
-    <div
-      style={{
-        border: "1px solid red",
-        height: "250px",
-        width: "250px",
-        margin: "2rem auto",
-      }}
-      onClick={handleClick}
-    >
-      {children}
-    </div>
-  );
-};
-
-const CompC: FC<{ children: ReactNode }> = ({ children }) => {
-  return <>{children}</>;
-};
