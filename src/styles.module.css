@@ -163,45 +163,6 @@
   color: #ffffff;
 }
 
-/* .wrapper {
-  position: relative;
-  width: 100%;
-  margin: 0 auto;
-  max-width: 1000px;
-}
-
-.wrapper:before {
-  left: -9px;
-}
-
-.wrapper:before, .wrapper:after {
-  content: "";
-  position: absolute;
-  top: 0;
-  width: 10px;
-  height: 100%;
-  background-color: #fff;
-}
-
-.wrapper video {
-  width: 100%;
-}
-.wrapper:after {
-  right: -5px;
-}
-
-.wrapper svg {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-}
-.wrapper svg > rect {
-  -webkit-mask: url(#mask);
-  mask: url(#mask);
-} */
-
 @media only screen and (min-width: 768px) {
   .StyledPageComponentsWrapper {
     width: 450px;
@@ -253,18 +214,3 @@
 .wrapper svg rect {
   fill: #fff;
 }
-
-/* .wrapper:before, .wrapper:after {
-  content: "";
-  position: absolute;
-  top: 0;
-  width: 10px;
-  height: 100%;
-  background-color: #fff;
-} */
-/* .wrapper:before {
-  left: -9px;
-}
-.wrapper:after {
-  right: -5px;
-} */

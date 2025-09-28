@@ -168,39 +168,6 @@ export default function Home() {
                                         )}
                                     </div>
                                   </div>
-                                  {/* <button
-                                    style={{
-                                      position: "absolute",
-                                      display: "flex",
-                                      alignItems: "center",
-                                      justifyContent: "center",
-                                      bottom: "0px",
-                                      right: "5px",
-                                      height: "30px",
-                                      width: "30px",
-                                      borderRadius: "50%",
-                                      border: "none",
-                                      background: "white",
-                                      cursor: "pointer",
-                                    }}
-                                    onClick={() => {
-                                      startUpload({
-                                        file: _file,
-                                        // fileDataUrl:
-                                        //   events.upload_ready.fileDataUrl,
-                                        upload_preset: "terunkom",
-                                        api_key: "811718711578253",
-                                        tags: "demo_upload",
-                                      });
-                                    }}
-                                  >
-                                    <Image
-                                      alt="upload icon"
-                                      src="/upload.png"
-                                      width={24}
-                                      height={24}
-                                    />
-                                  </button> */}
 
                                   {requestState &&
                                     events[requestState] &&
