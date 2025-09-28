@@ -49,7 +49,7 @@ export default function Home() {
                   alignItems: "center",
                   width: "100%",
                   height: "250px",
-                  border: "1px dashed #CBD0DC",
+                  border: "2px dashed #CBD0DC",
                   padding: "1rem",
                   background: "#ffffff",
                   borderRadius: "1rem",
