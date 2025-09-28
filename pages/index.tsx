@@ -21,14 +21,16 @@ export default function Home() {
   const name = "file-upload";
   return (
     <Layout>
-      <div className={styles.StyledCard}>
+      <div className={styles.Card}>
         <div className={styles.CardHeader}>
           <div className={styles.CardHeaderIconWrapper}>
             <UploadIcon />
           </div>
           <div className={styles.CardHeaderTextWrapper}>
-            <h5 className={styles.Text__h5}>Upload files</h5>
-            <h6 className={styles.Text__h6}>
+            <h5 className={`${styles.Text__h5} ${styles.Text__gray900}`}>
+              Upload files
+            </h5>
+            <h6 className={`${styles.Text__h6} ${styles.Text__gray500}`}>
               Select and upload the files of your choice
             </h6>
           </div>
@@ -53,20 +55,23 @@ export default function Home() {
                   borderRadius: "1rem",
                 }}
               >
-                <h4 style={{ paddingTop: "1rem", paddingBottom: "0.5rem" }}>
-                  <b>Drag and Drop files here</b>
-                </h4>
-                <p style={{ paddingTop: "0.5rem", paddingBottom: "1rem" }}>
-                  OR
-                </p>
+                <div className={styles.UploadArea__wrapper}>
+                  <UploadIcon />
+                  <h5 className={`${styles.Text__h6} ${styles.Text__gray900}`}>
+                    Choose a file or drag & drop it here
+                  </h5>
+                  <h6 className={`${styles.Text__h6} ${styles.Text__gray500} ${styles.TextAlign__center}`}>
+                    JPEG, PNG, PDG, and MP4 formats, up to 50MB
+                  </h6>
 
-                <label
-                  className={`${styles.StyledPrimaryButton} ${styles.Button}`}
-                  role="button"
-                  htmlFor={name}
-                >
-                  upload
-                </label>
+                  <label
+                    className={`${styles.StyledPrimaryButton} ${styles.Button}`}
+                    role="button"
+                    htmlFor={name}
+                  >
+                    Browse File
+                  </label>
+                </div>
               </FileUploadArea>
             }
           >
