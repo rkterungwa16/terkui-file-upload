@@ -47,12 +47,12 @@ export default function Home() {
                 <div className={styles.UploadArea__wrapper}>
                   <UploadIcon />
                   <h5 className={`${styles.Text__h6} ${styles.Text__gray900}`}>
-                    Choose a file or drag & drop it here
+                    Choose a file
                   </h5>
                   <h6
                     className={`${styles.Text__h6} ${styles.Text__gray500} ${styles.TextAlign__center}`}
                   >
-                    JPEG, PNG, PDF, and MP4 formats, up to 50MB
+                    JPEG, PNG, and other image formats
                   </h6>
 
                   <label
