@@ -36,6 +36,16 @@
   color: #6f6f6f;
 }
 
+.UploadedFileCard {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  background: #EEF1F7;
+  border-radius: 1rem;
+  padding: 1.125rem;
+}
+
 .CardHeader {
   display: flex;
   justify-content: flex-start;
@@ -98,6 +108,14 @@
 .Icon {
   width: 2rem;
   height: 2rem;
+}
+
+.Upload__wrapper {
+  width: 100%;
+  display: flex;
+  margin-top: 1rem;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .UploadArea {

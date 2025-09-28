@@ -68,15 +68,7 @@ export default function Home() {
             {({ files, method, url, headers }) => {
               if (files.length) {
                 return (
-                  <div
-                    style={{
-                      background: "#f3f1f2",
-                      width: "100%",
-                      marginTop: "1rem",
-                      padding: "0.6rem",
-                      borderRadius: "1rem",
-                    }}
-                  >
+                  <div className={styles.Upload__wrapper}>
                     {files.map((_file) => (
                       <FileUpload
                         key={_file.fileId}
@@ -94,16 +86,7 @@ export default function Home() {
                                   {console.log("status____", requestState)}
                                   {console.log("progress____", progress)} */}
 
-                                <div
-                                  className={styles.StyledCard}
-                                  style={{
-                                    position: "relative",
-                                    display: "flex",
-                                    alignItems: "center",
-                                    flexDirection: "row",
-                                    marginBottom: "0.5rem",
-                                  }}
-                                >
+                                <div className={styles.UploadedFileCard}>
                                   <Image
                                     src={events.upload_ready.fileDataUrl}
                                     alt={_file.name}
