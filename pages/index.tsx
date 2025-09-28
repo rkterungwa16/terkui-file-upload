@@ -51,7 +51,7 @@ export default function Home() {
                   <h6
                     className={`${styles.Text__h6} ${styles.Text__gray500} ${styles.TextAlign__center}`}
                   >
-                    JPEG, PNG, PDG, and MP4 formats, up to 50MB
+                    JPEG, PNG, PDF, and MP4 formats, up to 50MB
                   </h6>
 
                   <label
