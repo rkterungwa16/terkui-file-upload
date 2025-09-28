@@ -4,7 +4,7 @@ import { SVGIcon } from "./svg-icon";
 import { FC } from "react";
 
 const mapArcsToColor = {
-  first: "#741b47",
+  first: "#375EF9",
   second: "#c5bdb7",
   third: "#9c8a7b",
 };

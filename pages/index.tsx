@@ -11,6 +11,7 @@ import { Layout } from "../src/layout";
 
 import styles from "../src/styles.module.css";
 import { UploadIcon } from "../src/icons/upload-icon";
+import { calcUploadedFileSize } from "../src/utils";
 
 const CLOUD_NAME = "doy0uyv63";
 const CLOUD_URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
@@ -82,9 +83,13 @@ export default function Home() {
                           <>
                             {events?.upload_ready?.fileDataUrl && (
                               <>
-                                {/* {console.log("events____", events)}
-                                  {console.log("status____", requestState)}
-                                  {console.log("progress____", progress)} */}
+                                {console.log(
+                                  "events____",
+                                  events,
+                                  events.upload_progress.event?.total
+                                )}
+                                {console.log("status____", requestState)}
+                                {console.log("progress____", progress)}
 
                                 <div className={styles.UploadedFileCard}>
                                   <Image
@@ -106,27 +111,61 @@ export default function Home() {
                                   >
                                     <span
                                       style={{
-                                        fontSize: "14px",
-                                        fontWeight: "bold",
+                                        fontSize: "1rem",
+                                        color: "#292D32",
                                         marginBottom: "0.5rem",
                                       }}
                                     >
                                       {_file.name}
                                     </span>
-                                    {requestState &&
-                                      events[requestState] &&
-                                      progress.percent !== 1 && (
-                                        <span
-                                          style={{
-                                            fontSize: "14px",
-                                            color: "#a4aeb6",
-                                            fontWeight: "bold",
-                                          }}
-                                        >
-                                          {events.upload_progress.timeRemaining}{" "}
-                                          s
-                                        </span>
-                                      )}
+                                    <div
+                                      style={{ display: "flex", gap: "0.5re" }}
+                                    >
+                                      <span
+                                        style={{
+                                          fontSize: "1rem",
+                                          color: "#A9ACB4",
+                                        }}
+                                      >
+                                        {events.upload_progress.event?.total
+                                          ? calcUploadedFileSize({
+                                              percent:
+                                                events.upload_progress.percent,
+                                              total:
+                                                events.upload_progress.event
+                                                  .total,
+                                              status: requestState,
+                                            })
+                                          : 0}{" "}
+                                        of{" "}
+                                        {events.upload_progress.event?.total
+                                          ? calcUploadedFileSize({
+                                              percent:
+                                                events.upload_progress.percent,
+                                              total:
+                                                events.upload_progress.event
+                                                  .total,
+                                              status: "upload_complete",
+                                            })
+                                          : 0}
+                                      </span>
+                                      {requestState &&
+                                        events[requestState] &&
+                                        progress.percent !== 1 && (
+                                          <span
+                                            style={{
+                                              fontSize: "1rem",
+                                              color: "#A9ACB4",
+                                            }}
+                                          >
+                                            {
+                                              events.upload_progress
+                                                .timeRemaining
+                                            }{" "}
+                                            s
+                                          </span>
+                                        )}
+                                    </div>
                                   </div>
                                   {/* <button
                                     style={{
