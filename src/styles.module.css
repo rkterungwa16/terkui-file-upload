@@ -105,8 +105,8 @@
 
 .CardBody {
   width: 100%;
-  padding: 1rem;
   overflow-y: scroll;
+  padding: 1rem 1rem 0rem 1rem;
 }
 
 .Icon {
