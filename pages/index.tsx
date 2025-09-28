@@ -42,25 +42,15 @@ export default function Home() {
             headers={{ "X-Requested-With": "XMLHttpRequest" }}
             inputComponent={<FileUploadInput id={id} name={name} />}
             uploadAreaComponent={
-              <FileUploadArea
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  width: "100%",
-                  height: "250px",
-                  border: "2px dashed #CBD0DC",
-                  padding: "1rem",
-                  background: "#ffffff",
-                  borderRadius: "1rem",
-                }}
-              >
+              <FileUploadArea className={styles.UploadArea}>
                 <div className={styles.UploadArea__wrapper}>
                   <UploadIcon />
                   <h5 className={`${styles.Text__h6} ${styles.Text__gray900}`}>
                     Choose a file or drag & drop it here
                   </h5>
-                  <h6 className={`${styles.Text__h6} ${styles.Text__gray500} ${styles.TextAlign__center}`}>
+                  <h6
+                    className={`${styles.Text__h6} ${styles.Text__gray500} ${styles.TextAlign__center}`}
+                  >
                     JPEG, PNG, PDG, and MP4 formats, up to 50MB
                   </h6>
 
