@@ -119,7 +119,7 @@ export default function Home() {
                                       {_file.name}
                                     </span>
                                     <div
-                                      style={{ display: "flex", gap: "0.5re" }}
+                                      style={{ display: "flex", gap: "0.5rem" }}
                                     >
                                       <span
                                         style={{
@@ -149,6 +149,7 @@ export default function Home() {
                                             })
                                           : 0}
                                       </span>
+
                                       {requestState &&
                                         events[requestState] &&
                                         progress.percent !== 1 && (
